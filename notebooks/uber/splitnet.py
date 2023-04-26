@@ -44,6 +44,10 @@ class SplitNet(nn.Module):
 
     def forward(self, x):
         return self.net(x)
+    
+    def la_forward(self, x);
+        x = x.clone().detach().requires_grad_(True) # allows to take derivative w.r.t. input
+        return self.forward(x), x
 
     def forward_with_activations(self, x):
         h = x

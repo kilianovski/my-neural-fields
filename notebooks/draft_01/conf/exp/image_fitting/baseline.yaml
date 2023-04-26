@@ -1,0 +1,9 @@
+total_steps: 5000
+device: cuda:0
+
+optimizer:
+  _target_: torch.optim.Adam
+  lr: 1e-4
+
+logging:
+  steps_til_summary: 200
