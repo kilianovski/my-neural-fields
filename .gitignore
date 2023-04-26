@@ -1,5 +1,7 @@
 data/
 wandb/
+vis_artifacts/
+tensorboard_logs/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
