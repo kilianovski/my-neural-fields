@@ -28,9 +28,7 @@ def sdf(model_output, gt):
     grad_constraint = torch.abs(gradient.norm(dim=-1) - 1)
     # Exp      # Lapl
     # -----------------
-    return {'sdf': torch.abs(sdf_constraint).mean() * 3e3,  # 1e4      # 3e3
-            'inter': inter_constraint.mean() * 1e2,  # 1e2                   # 1e3
-            'normal_constraint': normal_constraint.mean() * 1e2,  # 1e2
-            'grad_constraint': grad_constraint.mean() * 5e1}  # 1e1      # 5e1
-
-    # inter = 3e3 for ReLU-PE
+    return {'sdf': torch.abs(sdf_constraint).mean() * 3e3,
+            'inter': inter_constraint.mean() * 1e2,
+            'normal_constraint': normal_constraint.mean() * 1e2,
+            'grad_constraint': grad_constraint.mean() * 5e1}
