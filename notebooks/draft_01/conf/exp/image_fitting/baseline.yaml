@@ -1,9 +1,19 @@
 total_steps: 5000
 device: cuda:0
 
+# data:
+#   image: bsd500_19
+#   dir: ../../data/BSD500/train
+#   resolution: 256
+
+data:
+  image: camera
+  resolution: 512
+
 optimizer:
   _target_: torch.optim.Adam
   lr: 1e-4
 
 logging:
   steps_til_summary: 200
+  project_name: splitnet__image

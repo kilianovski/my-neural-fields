@@ -59,16 +59,18 @@ class SplitNetLinPosEnc(nn.Module):
                  ):
         super().__init__()
         import rff
+        if not hasattr(m, '__len__'):
+            m = [m] * (hidden_layers+2)
         self.encoding = rff.layers.GaussianEncoding(sigma=10.0, input_size=in_features, encoded_size=encoding_size)
         self.net = []
         layer_cls = SplitLayerLin
-        self.net += [layer_cls(encoding_size*2, hidden_features, m=m)]
-        self.net += [layer_cls(hidden_features, hidden_features, m=m) for _ in range(hidden_layers)]
+        self.net += [layer_cls(encoding_size*2, hidden_features, m=m[0])]
+        self.net += [layer_cls(hidden_features, hidden_features, m=m[i+1]) for i in range(hidden_layers)]
 
         if outermost_linear:
             self.net += [nn.Linear(hidden_features, out_features)]
         else:
-            self.net += [layer_cls(hidden_features, out_features, m=m)]
+            self.net += [layer_cls(hidden_features, out_features, m=m[-1])]
 
         self.net = nn.Sequential(*self.net)
         self.outermost_linear = outermost_linear
@@ -131,17 +133,20 @@ class SplitNetPosEnc(nn.Module):
                  m=1.
                  ):
         super().__init__()
+        if not hasattr(m, '__len__'):
+            m = [m] * (hidden_layers+2)
+
         import rff
         self.encoding = rff.layers.GaussianEncoding(sigma=10.0, input_size=in_features, encoded_size=encoding_size)
         self.net = []
 
-        self.net += [SplitLayer(encoding_size*2, hidden_features, m=m)]
-        self.net += [SplitLayer(hidden_features, hidden_features, m=m) for _ in range(hidden_layers)]
+        self.net += [SplitLayer(encoding_size*2, hidden_features, m=m[0])]
+        self.net += [SplitLayer(hidden_features, hidden_features, m=m[i+1]) for i in range(hidden_layers)]
 
         if outermost_linear:
             self.net += [nn.Linear(hidden_features, out_features)]
         else:
-            self.net += [SplitLayer(hidden_features, out_features, m=m)]
+            self.net += [SplitLayer(hidden_features, out_features, m=m[-1])]
 
         self.net = nn.Sequential(*self.net)
         self.outermost_linear = outermost_linear
