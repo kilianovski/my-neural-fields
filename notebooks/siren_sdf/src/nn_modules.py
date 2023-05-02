@@ -90,36 +90,79 @@ class FCBlock(nn.Module):
         output = self.net(coords)
         return output
     
+import torch.nn.init as init
+    
 class SplitLayer(nn.Module):
-    def __init__(self, input_dim, h=32):
+    def __init__(self, input_dim, h=32, activation_type="default", is_last=False):
         super().__init__()
         self.linear = nn.Linear(input_dim, h*4)
+        self.activation_type = activation_type
+        # self.init_weights()
+        self.is_last = is_last
+        
+    # def init_weights(self):
+    #     if self.activation_type == "default":
+    #         init.xavier_uniform_(self.linear.weight)
+    #     elif self.activation_type == "siren":
+    #         init.normal_(self.linear.weight, mean=0.0, std=1.0 / self.linear.in_features)
+            
+    def init_weights(self):
+        # Apply Xavier initialization for sigmoid and tanh
+        init.xavier_uniform_(self.linear.weight[:, :2 * self.linear.out_features // 4])
+        # Apply SIREN initialization for sin and cos
+        init.normal_(self.linear.weight[:, 2 * self.linear.out_features // 4:], mean=0.0, std=1.0 / self.linear.in_features)# np.sqrt(6 / num_input) / 30
+        # init.normal_(self.linear.weight[:, 2 * self.linear.out_features // 4:], mean=0.0, std=np.sqrt(6 / self.linear.in_features) / 10)
         
     def forward(self, x):
         o = self.linear(x).chunk(4,-1)
-        o = o[0].sigmoid() * o[1].tanh() * o[2].sin() * o[3].cos()
-        return o
+        if self.activation_type == "default":
+            o = o[0].sigmoid() * o[1].tanh() * o[2].sin() * o[3].cos()
+        elif self.activation_type == "siren":
+            o = o[0].sigmoid() * o[1].tanh() * o[2].sin() * o[3].cos()
+            # o = o[0].sin() * o[1].cos() * o[2].sigmoid() * o[3].tanh()
+        return self.post_process(o, x)
+    
+    def post_process(self, x, inp):
+        if not self.is_last:
+            x = x + inp
+            # x = x
+        # else:
+        #     x = x + inp
+        return x
     
     def forward_with_activations(self, x):
         preact = self.linear(x)
-        preact_tanh, preact_sigmoid, preact_sin, preact_cos = preact.chunk(4, dim=-1)
-        act_tanh, act_sigmoid, act_sin, act_cos = preact_tanh.tanh(), preact_sigmoid.sigmoid(), preact_sin.sin(), preact_cos.cos()
-        h = act_tanh * act_sigmoid * act_sin * act_cos
-
-        return h, [x, preact, preact_tanh, preact_sigmoid, preact_sin, preact_cos, act_tanh, act_sigmoid, act_sin, act_cos]
         
+        if self.activation_type == "default":
+            preact_sigmoid, preact_tanh, preact_sin, preact_cos = preact.chunk(4, dim=-1)
+            act_sigmoid, act_tanh, act_sin, act_cos = preact_sigmoid.sigmoid(), preact_tanh.tanh(), preact_sin.sin(), preact_cos.cos()
+        elif self.activation_type == "siren":
+            preact_sin, preact_cos, preact_sigmoid, preact_tanh = preact.chunk(4, dim=-1)
+            act_sin, act_cos, act_sigmoid, act_tanh = preact_sin.sin(), preact_cos.cos(), preact_sigmoid.sigmoid(), preact_tanh.tanh()
+        
+        h = act_tanh * act_sigmoid * act_sin * act_cos
+        
+        h = self.post_process(h, x)
+        
+        return h, [x, preact, preact_tanh, preact_sigmoid, preact_sin, preact_cos, act_tanh, act_sigmoid, act_sin, act_cos]
+
+    
 class UberSDF(nn.Module):
     def __init__(self, in_features, out_features, num_hidden_layers, hidden_features,
-                 outermost_linear=False, nonlinearity='relu', weight_init=None):
+                 outermost_linear=False, nonlinearity='relu', weight_init=None, activation_type="siren"):
         super(UberSDF, self).__init__()
         
         self.net = []
-        self.net.append(SplitLayer(hidden_features, hidden_features))
+        self.net.append(nn.Sequential(
+                SplitLayer(hidden_features, hidden_features, activation_type)#, BatchNorm1dNCSpatial(hidden_features)
+            ))
         
         for i in range(num_hidden_layers):
-            self.net.append(SplitLayer(hidden_features, hidden_features))
-        
-        self.net.append(SplitLayer(hidden_features, out_features))
+            self.net.append(nn.Sequential(
+                SplitLayer(hidden_features, hidden_features, activation_type)#, BatchNorm1dNCSpatial(hidden_features)
+            ))
+            
+        self.net.append(SplitLayer(hidden_features, out_features, activation_type, is_last=True))
         
         self.net = nn.Sequential(*self.net)
         
