@@ -1,0 +1,15 @@
+# @package _global_
+defaults:
+  - _self_
+  - model: siren
+  - logging: wandb
+  - optimizer: adamw
+
+image: sasha.jpg
+image_dir: ../../data
+image_W: 512
+
+use_wandb: true
+is_debug: false
+
+random_seed: [0, 1, 2, 3, 4]

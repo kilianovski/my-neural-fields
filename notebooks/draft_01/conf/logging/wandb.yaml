@@ -1,0 +1,5 @@
+logger:
+  _target_: spellbook.logging.wandb.WandbLogger
+  project: "01_splitnet__${image}"
+
+steps_till_summary: 500
