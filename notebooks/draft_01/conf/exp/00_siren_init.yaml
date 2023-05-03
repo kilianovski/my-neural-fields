@@ -1,5 +1,3 @@
 # @package _global_
 logging:
   experiment_name: "siren_init__initc=${model.init_c}__flic=${model.first_layer_init_c}"
-
-total_steps: 3000
