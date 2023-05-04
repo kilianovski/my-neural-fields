@@ -1,0 +1,11 @@
+_target_: spellbook.parallel.ParallelSplitNet
+model_configs:
+  - hidden_layers:
+      - 64
+      - 16
+  - hidden_layers:
+      - 64
+      - 16
+  - hidden_layers:
+      - 64
+      - 16

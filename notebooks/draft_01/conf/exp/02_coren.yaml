@@ -1,0 +1,5 @@
+# @package _global_
+logging:
+  experiment_name: "coren__initc=${model.init_c}__flic=${model.first_layer_init_c}"
+
+model._target_: spellbook.siren.model.Coren

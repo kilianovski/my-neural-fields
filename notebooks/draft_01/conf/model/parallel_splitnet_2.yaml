@@ -1,0 +1,15 @@
+_target_: spellbook.parallel.ParallelSplitNet
+encoding_size: 64
+model_configs:
+  - hidden_layers:
+      - 64
+      - 16
+  - hidden_layers:
+      - 64
+      - 16
+  - hidden_layers:
+      - 64
+      - 16
+  - hidden_layers:
+      - 64
+      - 16

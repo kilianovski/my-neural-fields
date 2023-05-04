@@ -1,0 +1,7 @@
+# @package _global_
+
+defaults:
+  - override /model: splitnet_posenc_omegas
+
+logging:
+  experiment_name: "giga_omegas"
