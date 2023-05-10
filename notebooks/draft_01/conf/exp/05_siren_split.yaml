@@ -1,0 +1,7 @@
+# @package _global_
+
+defaults:
+  - override /model: siren_split
+
+logging:
+  experiment_name: "siren_split"

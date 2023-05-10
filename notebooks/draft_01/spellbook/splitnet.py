@@ -389,7 +389,7 @@ def init_siren(W, fan_in, omega=30, init_c=24, flic=2, is_first=False):
     if is_first:
         c = flic / fan_in
     else:
-        c = np.sqrt(init_c / fan_in) / omega    
+        c = np.sqrt(init_c / fan_in) / omega
     W.uniform_(-c, c)
 
 

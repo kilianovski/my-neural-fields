@@ -210,6 +210,8 @@ def _train_seed(cfg, random_seed=0):
         optimizer.zero_grad()
         loss.backward()
         optimizer.step()
+        
+    return model
 
 
 def train(cfg):

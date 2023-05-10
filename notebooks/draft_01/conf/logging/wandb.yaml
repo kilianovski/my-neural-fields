@@ -3,3 +3,4 @@ logger:
   project: "01_splitnet__${image}"
 
 steps_till_summary: 500
+experiment_name: empty_experiment_name

@@ -4,4 +4,4 @@ defaults:
   - override /model: parallel_splitnet_2
 
 logging:
-  experiment_name: "parallel_splitnet_2"
+  experiment_name: "splitnet"

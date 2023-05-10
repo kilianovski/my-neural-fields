@@ -1,0 +1,10 @@
+# @package _global_
+image: tokyo512.png
+image_dir: ../../data
+image_W: 512
+
+use_wandb: true
+is_debug: false
+total_steps: 100
+
+random_seed: 0
