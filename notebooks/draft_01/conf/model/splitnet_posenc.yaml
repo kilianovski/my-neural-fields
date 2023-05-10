@@ -1,6 +1,6 @@
-_target_: spellbook.splitnet.SplitNetPosEnc
+_target_: spellbook.splitnet.SplitNetPosEncOmegas
 in_features: 2
-encoding_size: 64
+encoding_size: 128
 hidden_features: 128
 hidden_layers: 1
 outermost_linear: False

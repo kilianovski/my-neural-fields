@@ -22,7 +22,7 @@ class SplitLayer(nn.Module):
         self.output_dim = output_dim
         self.m = m
         self.omegas = omegas
-        self.init_weights()
+        # self.init_weights()
 
     def init_weights(self):
         s = self.output_dim
@@ -61,7 +61,7 @@ class SplitLayer(nn.Module):
 
 
 class SimpleSplitNet(nn.Module):
-    def __init__(self, in_features, hidden_layers, out_features, use_bias=True, omegas=(1, 1, 1.0, 1), m=1.0):
+    def __init__(self, in_features, hidden_layers, out_features, outermost_linear=False, use_bias=True, omegas=(1, 1, 1.0, 1), m=1.0):
         super().__init__()
 
         if not hasattr(m, '__len__'):
@@ -78,7 +78,11 @@ class SimpleSplitNet(nn.Module):
         for i, (fan_in, fan_out) in enumerate ( zip(hidden_layers, hidden_layers[1:]) ):
             net.append(SplitLayer(fan_in, fan_out, use_bias=use_bias, m=m[i+1], omegas=omegas[i+1]))
 
-        net.append(nn.Linear(fan_out, out_features))
+        if outermost_linear:
+            net.append(nn.Linear(fan_out, out_features))
+        else:
+            net.append(SplitLayer(fan_out, out_features, m=m[-1]))
+
         self.net = nn.Sequential(*net)
 
     def forward(self, x):
