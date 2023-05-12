@@ -177,6 +177,7 @@ def _train_seed(cfg, random_seed=0):
 
     total_steps = cfg["total_steps"]
     steps_til_summary = cfg.logging["steps_till_summary"]
+    batch_size = cfg.get('batch_size', None)
 
     total_params = count_parameters(model)
 
@@ -185,8 +186,19 @@ def _train_seed(cfg, random_seed=0):
     optimizer = instantiate(cfg.optimizer, params=model.parameters())
 
     for step in range(total_steps):
-        model_output = model(model_input)
-        mse, psnr = mse_and_psnr(model_output, ground_truth)
+        if batch_size:
+            idxs = torch.randint(0, model_input.shape[1], (batch_size,))
+            model_input_batch = model_input[:, idxs]
+            ground_truth_batch = ground_truth[:, idxs]
+            if step < 2:
+                print('model_input.shape', model_input.shape)
+                print('model_input_batch.shape', model_input_batch.shape)
+        else:
+            model_input_batch = model_input
+            ground_truth_batch = ground_truth
+
+        model_output_batch = model(model_input_batch)
+        mse, psnr = mse_and_psnr(model_output_batch, ground_truth_batch)
         loss = mse
 
         log_dic = {"step": step, "mse": mse.item(), "psnr": psnr.item()}
@@ -196,6 +208,9 @@ def _train_seed(cfg, random_seed=0):
             print(f"Step {step}, Total loss {loss:0.6f}")
             # img_grad_tensor = gradient(model_output, coords)
             # img_laplacian_tensor = laplace(model_output, coords)
+
+            with torch.inference_mode():
+                model_output = model(model_input)
 
             img = imagify_tensor(model_output, H, W)
             # img_grad = imagify_tensor(img_grad_tensor.norm(dim=-1))
