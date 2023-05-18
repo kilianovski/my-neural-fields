@@ -203,7 +203,7 @@ def U(*shape):
     x = (x - 0.5) * 2.0
     return x
 
-def plot_distributions(data, title='sample titles'):
+def plot_distributions(data, title='sample titles', autosize=False):
     for k, v in data.items():
         print(k, tensor2str(v))
     data = {k: to_np(v) for k, v in data.items()}
@@ -225,7 +225,7 @@ def plot_distributions(data, title='sample titles'):
     )
 
     fig.update_layout(
-        autosize=False,
+        autosize=autosize,
         width=1000,
         height=600,
     )

@@ -10,9 +10,11 @@ class WandbLogger:
     def __init__(
         self,
         metrics_summary=psnr_metrics_summary,
+        init_on_creation=True,
         **init_kwargs
     ):
-        wandb.init(**init_kwargs)
+        if init_on_creation:
+            wandb.init(**init_kwargs)
 
         for metric, summary in metrics_summary:
             wandb.define_metric(metric, summary=summary)

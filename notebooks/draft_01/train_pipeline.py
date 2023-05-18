@@ -226,7 +226,7 @@ def _train_seed(cfg, random_seed=0):
         loss.backward()
         optimizer.step()
         
-    return model
+    return model, psnr
 
 
 def train(cfg):

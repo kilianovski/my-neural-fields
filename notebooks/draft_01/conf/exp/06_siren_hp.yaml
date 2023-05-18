@@ -1,0 +1,10 @@
+# @package _global_
+logging:
+  experiment_name: "baseline__initc=${model.init_c}__flic=${model.first_layer_init_c}"
+  logger:
+    project: "tune_siren__${image}"
+    init_on_creation: false
+
+image: cameraman
+total_steps: 300
+random_seed: [42]
