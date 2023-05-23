@@ -1,0 +1,9 @@
+# @package _global_
+defaults:
+  - override /model: parallel_splitnet_deep
+
+
+logging:
+  logger:
+    _target_: spellbook.logging.wandb.ConsoleLogger
+  experiment_name: "splitnet_lsuv"

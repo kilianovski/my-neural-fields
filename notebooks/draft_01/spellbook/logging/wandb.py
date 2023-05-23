@@ -26,11 +26,16 @@ class WandbLogger:
         wandb.log({name: [wandb.Image(image, caption=caption)]})
 
 class ConsoleLogger:
-    def __init__(self, metrics_summary=psnr_metrics_summary):
+    def __init__(self, metrics_summary=psnr_metrics_summary, **kwargs):
         self.metrics_summary = metrics_summary
+        self.logging_frequency = kwargs.get("logging_frequency", 100)
+        self.i = 0
     
     def log_dict(self, dict_to_log):
-        print(dict_to_log)
+        
+        if self.i % self.logging_frequency == 0:
+            print(dict_to_log)
+        self.i += 1
 
     def log_image(self, image, name, caption=None):
         pass
