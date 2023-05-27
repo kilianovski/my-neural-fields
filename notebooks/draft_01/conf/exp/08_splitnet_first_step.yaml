@@ -1,0 +1,29 @@
+image: cameraman
+image_dir: ../../data
+image_W: 256
+use_wandb: true
+is_debug: false
+total_steps: 3000
+random_seed:
+- 0
+model:
+  _target_: spellbook.parallel.ParallelSplitNet
+  model_configs:
+  - hidden_layers:
+    - 128
+    - 128
+    m:
+    - 10.0
+    - 10.0
+    - 1.0
+logging:
+  logger:
+    _target_: spellbook.logging.wandb.WandbLogger
+    project: 01_splitnet__${image}
+  steps_till_summary: 500
+  experiment_name: splitnet_posenc__baseline
+optimizer:
+  _target_: torch.optim.AdamW
+  weight_decay: 0.0
+  lr: 0.0001
+device: cuda:0

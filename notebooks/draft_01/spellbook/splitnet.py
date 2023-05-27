@@ -203,7 +203,13 @@ def U(*shape):
     x = (x - 0.5) * 2.0
     return x
 
-def plot_distributions(data, title='sample titles', autosize=False):
+def plot_distributions(data, 
+                       title='sample titles', 
+                       autosize=False, 
+                       facet_col_wrap=4,
+                       showlegend=False,
+                       width=1000,
+                       height=600):
     for k, v in data.items():
         print(k, tensor2str(v))
     data = {k: to_np(v) for k, v in data.items()}
@@ -219,15 +225,16 @@ def plot_distributions(data, title='sample titles', autosize=False):
         x="value",
         color="act",
         facet_col="act",
-        facet_col_wrap=4,
+        facet_col_wrap=facet_col_wrap,
         histnorm="probability density",
         title=title,
     )
 
     fig.update_layout(
         autosize=autosize,
-        width=1000,
-        height=600,
+        width=width,
+        height=height,
+        showlegend=showlegend,
     )
 
     fig.show()

@@ -1,9 +1,13 @@
 # @package _global_
 defaults:
-  - override /model: parallel_splitnet_deep
-
+  - override /model: parallel_splitnet
 
 logging:
   logger:
     _target_: spellbook.logging.wandb.ConsoleLogger
-  experiment_name: "splitnet_lsuv"
+    init_on_creation: false
+
+  experiment_name: "splitnet_lsuv_sweep"
+
+
+total_steps: 500

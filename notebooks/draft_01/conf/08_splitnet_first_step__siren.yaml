@@ -1,0 +1,28 @@
+image: cameraman
+image_dir: ../../data
+image_W: 256
+use_wandb: true
+is_debug: false
+total_steps: 3000
+random_seed:
+- 42
+model:
+  _target_: spellbook.siren.model.Siren
+  in_features: 2
+  out_features: none
+  hidden_features: 256
+  hidden_layers: 3
+  init_c: 6
+  first_layer_init_c: 1
+  outermost_linear: true
+logging:
+  logger:
+    _target_: spellbook.logging.wandb.WandbLogger
+    project: 01_splitnet__${image}
+  steps_till_summary: 500
+  experiment_name: siren_init__initc=${model.init_c}__flic=${model.first_layer_init_c}
+optimizer:
+  _target_: torch.optim.AdamW
+  weight_decay: 0.0
+  lr: 0.0001
+device: cuda:0
