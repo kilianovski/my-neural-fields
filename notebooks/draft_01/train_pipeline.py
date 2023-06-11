@@ -143,7 +143,7 @@ def imagify_tensor(t, H, W):
     return tensor2pil(to01(t.reshape(-1, H, W).expand(3, H, W)))
 
 
-def _train_seed(cfg, random_seed=0):
+def _train_seed(cfg, random_seed=0, model=None):
     seed_all(random_seed)
     print("Setting seed to", random_seed)
     is_debug = cfg.get("is_debug")
@@ -172,7 +172,8 @@ def _train_seed(cfg, random_seed=0):
     model_input, ground_truth = model_input.to(device), ground_truth.to(device)
 
     out_features = ground_truth.shape[-1]
-    model = instantiate(cfg["model"], out_features=out_features)
+    if model is None:
+        model = instantiate(cfg["model"], out_features=out_features)
     model.to(device)
 
     total_steps = cfg["total_steps"]
